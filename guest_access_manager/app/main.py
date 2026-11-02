@@ -31,6 +31,25 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
             self.send_error(404, "Not Found")
             return
 
+        # Accept only standard HTML form submissions.
+        content_type = self.headers.get("Content-Type", "")
+
+        if content_type.split(";", 1)[0].strip().lower() != \
+                "application/x-www-form-urlencoded":
+            self.send_error(415, "Unsupported Media Type")
+            return
+
+        try:
+            body = self.rfile.read(content_length)
+            form = parse_qs(
+                body.decode("utf-8"),
+                keep_blank_values=True,
+                max_num_fields=10
+            )
+        except (UnicodeDecodeError, ValueError):
+            self.send_error(400, "Invalid login form")
+            return
+
         # Login remains disabled until CSRF validation,
         # authentication, and rate limiting are connected.
         self.send_error(403, "Login not enabled yet")
