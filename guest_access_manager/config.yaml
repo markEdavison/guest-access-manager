@@ -2,7 +2,7 @@ name: "Guest Access Manager"
 version: "0.1.0"
 slug: "guest_access_manager"
 description: "Local guest reservation and Schlage lock access management"
-url: "https://github.com"
+url: "https://github.com/markEdavison/guest-access-manager"
 arch:
   - amd64
 startup: application
