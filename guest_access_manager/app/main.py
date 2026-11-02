@@ -10,6 +10,36 @@ PORT = 8099
 class GuestAccessHandler(BaseHTTPRequestHandler):
     def do_GET(self):
 
+        if self.path == "/staff-check":
+            import json
+
+            # Only trust identity headers from Home Assistant Supervisor.
+            trusted_proxy = self.client_address[0] == "172.30.32.2"
+
+            if trusted_proxy:
+                username = self.headers.get(
+                    "X-Remote-User-Name", ""
+                )
+                user_id = self.headers.get(
+                    "X-Remote-User-Id", ""
+                )
+            else:
+                username = ""
+                user_id = ""
+
+            result = {
+                "authenticated": bool(user_id),
+                "front_desk": bool(user_id and username == "frontdesk")
+            }
+
+            data = json.dumps(result).encode("utf-8")
+            self.send_response(200 if user_id else 403)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(data)))
+            self.end_headers()
+            self.wfile.write(data)
+            return
+
         if self.path == "/health":
             try:
                 with get_connection() as connection:
