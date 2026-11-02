@@ -86,7 +86,19 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
-    checkin.value = `${year}-${month}-${day}T15:00`;
+   
+checkin.value = `${year}-${month}-${day}T14:30`;
+
+const checkout = document.querySelector('input[name="checkout"]');
+const nextDay = new Date(date);
+nextDay.setDate(nextDay.getDate() + 1);
+
+const checkoutYear = nextDay.getFullYear();
+const checkoutMonth = String(nextDay.getMonth() + 1).padStart(2, "0");
+const checkoutDay = String(nextDay.getDate()).padStart(2, "0");
+
+checkout.value = `${checkoutYear}-${checkoutMonth}-${checkoutDay}T11:30`;
+
 </script>
 
             <p>Reservation database: Not configured</p>
