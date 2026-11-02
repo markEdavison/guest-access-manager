@@ -150,3 +150,18 @@ def ip_is_rate_limited(source_ip):
         ).fetchone()
 
     return row["failures"] >= 20
+
+def create_csrf_token():
+    """Generate a cryptographically secure CSRF token."""
+    return secrets.token_urlsafe(32)
+
+
+def verify_csrf_token(submitted_token, expected_token):
+    """Compare CSRF tokens securely."""
+    if not submitted_token or not expected_token:
+        return False
+
+    return hmac.compare_digest(
+        submitted_token,
+        expected_token
+    )
