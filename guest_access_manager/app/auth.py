@@ -61,3 +61,29 @@ def create_staff_user(username, password):
             (username, password_hash)
         )
         return cursor.lastrowid
+
+def authenticate_staff_user(username, password):
+    """Verify an active staff user's credentials."""
+    from database import get_connection
+
+    with get_connection() as connection:
+        user = connection.execute(
+            """
+            SELECT id, username, password_hash, role
+            FROM staff_users
+            WHERE username = ? AND active = 1
+            """,
+            (username,)
+        ).fetchone()
+
+    if user is None:
+        return None
+
+    if not verify_password(password, user["password_hash"]):
+        return None
+
+    return {
+        "id": user["id"],
+        "username": user["username"],
+        "role": user["role"]
+    }
