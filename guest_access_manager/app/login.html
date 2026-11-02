@@ -1,0 +1,35 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Front Desk Login</title>
+</head>
+<body>
+    <h1>Guest Access Manager</h1>
+    <h2>Front Desk Login</h2>
+
+    <form method="POST" action="login">
+        <label for="username">Username</label>
+        <input
+            id="username"
+            name="username"
+            type="text"
+            autocomplete="username"
+            required
+        >
+
+        <label for="password">Password</label>
+        <input
+            id="password"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            required
+        >
+
+        <button type="submit">Sign In</button>
+    </form>
+</body>
+</html>
