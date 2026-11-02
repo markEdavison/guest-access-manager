@@ -14,8 +14,7 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
     def do_GET(self):
 
         if self.path == "/staff-check":
-            import json
-
+ 
             # Only trust identity headers from Home Assistant Supervisor.
             trusted_proxy = self.client_address[0] == "172.30.32.2"
 
