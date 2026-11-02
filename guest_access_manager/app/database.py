@@ -80,6 +80,23 @@ def initialize_database():
             )
         """)
 
+        connection.execute("""
+            CREATE TABLE IF NOT EXISTS login_attempts (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT NOT NULL,
+                source_ip TEXT NOT NULL,
+                attempted_at INTEGER NOT NULL,
+                successful INTEGER NOT NULL DEFAULT 0
+            )
+        """)
+
+        connection.execute("""
+            CREATE INDEX IF NOT EXISTS
+                idx_login_attempts_lookup
+            ON login_attempts
+                (username, source_ip, attempted_at)
+        """)
+
 
 from datetime import datetime
 
