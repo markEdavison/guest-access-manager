@@ -55,6 +55,30 @@ def initialize_database():
                 FOREIGN KEY(reservation_id)
                     REFERENCES reservations(id)
             )
+            
+        connection.execute("""
+            CREATE TABLE IF NOT EXISTS staff_users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT NOT NULL UNIQUE,
+                password_hash TEXT NOT NULL,
+                role TEXT NOT NULL DEFAULT 'frontdesk',
+                active INTEGER NOT NULL DEFAULT 1,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
+        connection.execute("""
+            CREATE TABLE IF NOT EXISTS staff_sessions (
+                token_hash TEXT PRIMARY KEY,
+                user_id INTEGER NOT NULL,
+                expires_at INTEGER NOT NULL,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY(user_id)
+                    REFERENCES staff_users(id)
+                    ON DELETE CASCADE
+            )
+        """)
+
         """)
 
 from datetime import datetime
