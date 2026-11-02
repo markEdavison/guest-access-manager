@@ -6,6 +6,9 @@ from database import get_connection
 import json
 
 PORT = 8099
+# Keep the web server restricted to Home Assistant ingress.
+# Direct network access remains disabled during development.
+HOST = "0.0.0.0"
 
 class GuestAccessHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -147,6 +150,6 @@ checkout.value = `${checkoutYear}-${checkoutMonth}-${checkoutDay}T11:30`;
 
 if __name__ == "__main__":
     initialize_database()
-    server = HTTPServer(("0.0.0.0", PORT), GuestAccessHandler)
+    server = HTTPServer((HOST, PORT), GuestAccessHandler)
     print(f"Guest Access Manager listening on port {PORT}", flush=True)
     server.serve_forever()
