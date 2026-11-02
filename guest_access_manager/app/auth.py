@@ -87,3 +87,25 @@ def authenticate_staff_user(username, password):
         "username": user["username"],
         "role": user["role"]
     }
+
+def login_is_rate_limited(username, source_ip):
+    """Limit failed login attempts to five per 15 minutes."""
+    import time
+    from database import get_connection
+
+    cutoff = int(time.time()) - 900
+
+    with get_connection() as connection:
+        row = connection.execute(
+            """
+            SELECT COUNT(*) AS failures
+            FROM login_attempts
+            WHERE username = ?
+              AND source_ip = ?
+              AND attempted_at >= ?
+              AND successful = 0
+            """,
+            (username, source_ip, cutoff)
+        ).fetchone()
+
+    return row["failures"] >= 5
