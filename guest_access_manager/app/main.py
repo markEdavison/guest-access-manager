@@ -53,6 +53,42 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
         <body>
             <h1>Guest Access Manager</h1>
             <h2>System Setup Successful</h2>
+            
+<h2>New Guest Reservation</h2>
+
+<form>
+    <label>Guest Name</label>
+    <input type="text" name="guest_name" required>
+
+    <label>Guest Email</label>
+    <input type="email" name="guest_email" required>
+
+    <label>Reservation Number</label>
+    <input type="text" name="reservation_number" required>
+
+    <label>Check-in Date and Time</label>
+    <input type="datetime-local" name="checkin" id="checkin" required>
+
+    <label>Checkout Date and Time</label>
+    <input type="datetime-local" name="checkout" required>
+
+    <label>Assigned Room</label>
+    <select name="room">
+        <option value="A101">A101</option>
+    </select>
+
+    <p>Reservation saving is not enabled yet.</p>
+</form>
+
+<script>
+    const checkin = document.getElementById("checkin");
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    checkin.value = `${year}-${month}-${day}T15:00`;
+</script>
+
             <p>Reservation database: Not configured</p>
             <p>Schlage lock connection: Not configured</p>
             <p>Guest PIN automation: Not configured</p>
