@@ -13,6 +13,26 @@ HOST = "0.0.0.0"
 class GuestAccessHandler(BaseHTTPRequestHandler):
     def do_GET(self):
 
+        if self.path == "/login":
+            try:
+                with open("/app/login.html", "rb") as file:
+                    data = file.read()
+
+                self.send_response(200)
+                self.send_header(
+                    "Content-Type",
+                    "text/html; charset=utf-8"
+                )
+                self.send_header("Cache-Control", "no-store")
+                self.send_header("Content-Length", str(len(data)))
+                self.end_headers()
+                self.wfile.write(data)
+
+            except OSError:
+                self.send_error(500, "Login page unavailable")
+
+            return
+
         if self.path == "/staff-check":
  
             # Only trust identity headers from Home Assistant Supervisor.
