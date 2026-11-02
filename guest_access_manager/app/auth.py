@@ -129,3 +129,24 @@ def record_login_attempt(username, source_ip, successful):
                 1 if successful else 0
             )
         )
+
+def ip_is_rate_limited(source_ip):
+    """Limit an IP address to 20 failed logins per 15 minutes."""
+    import time
+    from database import get_connection
+
+    cutoff = int(time.time()) - 900
+
+    with get_connection() as connection:
+        row = connection.execute(
+            """
+            SELECT COUNT(*) AS failures
+            FROM login_attempts
+            WHERE source_ip = ?
+              AND attempted_at >= ?
+              AND successful = 0
+            """,
+            (source_ip, cutoff)
+        ).fetchone()
+
+    return row["failures"] >= 20
