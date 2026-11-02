@@ -1,6 +1,7 @@
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import os
+from database import initialize_database
 
 PORT = 8099
 
@@ -31,6 +32,7 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
         self.wfile.write(data)
 
 if __name__ == "__main__":
+    initialize_database()
     server = HTTPServer(("0.0.0.0", PORT), GuestAccessHandler)
     print(f"Guest Access Manager listening on port {PORT}", flush=True)
     server.serve_forever()
