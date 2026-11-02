@@ -4,6 +4,7 @@ import os
 from database import initialize_database
 from database import get_connection
 import json
+from urllib.parse import parse_qs
 
 PORT = 8099
 # Keep the web server restricted to Home Assistant ingress.
