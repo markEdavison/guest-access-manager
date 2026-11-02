@@ -56,6 +56,7 @@ def initialize_database():
                     REFERENCES reservations(id)
             )
         """)
+        
         connection.execute("""
             CREATE TABLE IF NOT EXISTS staff_users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -79,7 +80,6 @@ def initialize_database():
             )
         """)
 
-        """)
 
 from datetime import datetime
 
