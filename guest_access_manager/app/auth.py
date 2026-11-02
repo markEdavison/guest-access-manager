@@ -109,3 +109,23 @@ def login_is_rate_limited(username, source_ip):
         ).fetchone()
 
     return row["failures"] >= 5
+
+def record_login_attempt(username, source_ip, successful):
+    """Record a staff login attempt for security monitoring."""
+    import time
+    from database import get_connection
+
+    with get_connection() as connection:
+        connection.execute(
+            """
+            INSERT INTO login_attempts
+                (username, source_ip, attempted_at, successful)
+            VALUES (?, ?, ?, ?)
+            """,
+            (
+                username,
+                source_ip,
+                int(time.time()),
+                1 if successful else 0
+            )
+        )
