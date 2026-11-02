@@ -56,3 +56,86 @@ def initialize_database():
                     REFERENCES reservations(id)
             )
         """)
+
+from datetime import datetime
+
+def save_reservation(
+    reservation_number,
+    guest_name,
+    guest_email,
+    checkin,
+    checkout,
+    doors
+):
+    reservation_number = reservation_number.strip()
+    guest_name = guest_name.strip()
+    guest_email = guest_email.strip()
+
+    if not reservation_number or not guest_name or not guest_email:
+        raise ValueError("Reservation number, guest name, and email are required.")
+
+    if (
+        "@" not in guest_email
+        or guest_email.startswith("@")
+        or guest_email.endswith("@")
+    ):
+        raise ValueError("Enter a valid guest email address.")
+
+    try:
+        start = datetime.fromisoformat(checkin)
+        end = datetime.fromisoformat(checkout)
+    except (ValueError, TypeError):
+        raise ValueError("Invalid check-in or checkout date.")
+
+    if end <= start:
+        raise ValueError("Checkout must be after check-in.")
+
+    doors = list(dict.fromkeys(doors))
+
+    if not doors:
+        raise ValueError("Select at least one room.")
+
+    # Only A101 is configured during the pilot.
+    allowed_doors = {"A101"}
+
+    if any(door not in allowed_doors for door in doors):
+        raise ValueError("An assigned room is not configured.")
+
+    with get_connection() as connection:
+        existing = connection.execute(
+            "SELECT id FROM reservations WHERE reservation_number = ?",
+            (reservation_number,)
+        ).fetchone()
+
+        if existing:
+            raise ValueError("This reservation number already exists.")
+
+        cursor = connection.execute(
+            """
+            INSERT INTO reservations
+            (reservation_number, guest_name, guest_email,
+             checkin, checkout, status)
+            VALUES (?, ?, ?, ?, ?, 'Pending')
+            """,
+            (
+                reservation_number,
+                guest_name,
+                guest_email,
+                checkin,
+                checkout
+            )
+        )
+
+        reservation_id = cursor.lastrowid
+
+        for door in doors:
+            connection.execute(
+                """
+                INSERT INTO reservation_doors
+                (reservation_id, door_id)
+                VALUES (?, ?)
+                """,
+                (reservation_id, door)
+            )
+
+    return reservation_id
