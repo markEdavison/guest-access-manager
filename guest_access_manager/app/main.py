@@ -20,15 +20,38 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
 
+
         if self.path == "/login":
+            from auth import create_csrf_token
+            from http.cookies import SimpleCookie
+
             try:
-                with open("/app/login.html", "rb") as file:
-                    data = file.read()
+                csrf_token = create_csrf_token()
+
+                with open("/app/login.html", "r", encoding="utf-8") as file:
+                    html = file.read()
+
+                html = html.replace(
+                    "{{CSRF_TOKEN}}",
+                    csrf_token
+                )
+                data = html.encode("utf-8")
+
+                cookie = SimpleCookie()
+                cookie["gam_csrf"] = csrf_token
+                cookie["gam_csrf"]["path"] = "/"
+                cookie["gam_csrf"]["httponly"] = True
+                cookie["gam_csrf"]["samesite"] = "Strict"
+                # Secure=True will be required for HTTPS deployment.
 
                 self.send_response(200)
                 self.send_header(
                     "Content-Type",
                     "text/html; charset=utf-8"
+                )
+                self.send_header(
+                    "Set-Cookie",
+                    cookie["gam_csrf"].OutputString()
                 )
                 self.send_header("Cache-Control", "no-store")
                 self.send_header("Content-Length", str(len(data)))
