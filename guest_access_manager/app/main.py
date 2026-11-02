@@ -12,6 +12,12 @@ PORT = 8099
 HOST = "0.0.0.0"
 
 class GuestAccessHandler(BaseHTTPRequestHandler):
+    
+    def do_POST(self):
+        # Login processing will be implemented after
+        # CSRF protection and rate limiting are ready.
+        self.send_error(403, "Login not enabled yet")
+
     def do_GET(self):
 
         if self.path == "/login":
