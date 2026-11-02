@@ -38,3 +38,26 @@ def verify_password(password, stored_hash):
 
     except (ValueError, TypeError):
         return False
+
+def create_staff_user(username, password):
+    """Create a staff user with a securely hashed password."""
+    from database import get_connection
+
+    if not username or not password:
+        raise ValueError("Username and password are required.")
+
+    if len(password) < 12:
+        raise ValueError("Password must be at least 12 characters.")
+
+    password_hash = hash_password(password)
+
+    with get_connection() as connection:
+        cursor = connection.execute(
+            """
+            INSERT INTO staff_users
+                (username, password_hash, role)
+            VALUES (?, ?, 'frontdesk')
+            """,
+            (username, password_hash)
+        )
+        return cursor.lastrowid
