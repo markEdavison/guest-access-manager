@@ -95,6 +95,28 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
             self.wfile.write(data)
             return
 
+        # Require a valid staff session for the reservation page.
+        from http.cookies import SimpleCookie
+        from sessions import get_session_user
+
+        cookies = SimpleCookie()
+        try:
+            cookies.load(self.headers.get("Cookie", ""))
+            session_cookie = cookies.get("gam_session")
+            token = session_cookie.value if session_cookie else None
+        except Exception:
+            token = None
+
+        user = get_session_user(token)
+
+        if user is None:
+            self.send_response(302)
+            self.send_header("Location", "login")
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+            return
+
         html = """
         <!DOCTYPE html>
         <html>
