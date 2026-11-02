@@ -55,7 +55,7 @@ def initialize_database():
                 FOREIGN KEY(reservation_id)
                     REFERENCES reservations(id)
             )
-            
+        """)
         connection.execute("""
             CREATE TABLE IF NOT EXISTS staff_users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
