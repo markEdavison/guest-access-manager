@@ -85,3 +85,14 @@ def delete_session(token):
             "DELETE FROM staff_sessions WHERE token_hash = ?",
             (hash_session_token(token),)
         )
+
+def cleanup_expired_sessions():
+    """Remove expired staff sessions from the database."""
+    from database import get_connection
+
+    with get_connection() as connection:
+        cursor = connection.execute(
+            "DELETE FROM staff_sessions WHERE expires_at <= ?",
+            (int(time.time()),)
+        )
+        return cursor.rowcount
