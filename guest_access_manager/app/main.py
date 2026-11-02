@@ -15,6 +15,18 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
     
 
     def do_POST(self):
+        # Reject oversized or invalid login requests.
+        try:
+            content_length = int(
+                self.headers.get("Content-Length", "0")
+            )
+        except ValueError:
+            self.send_error(400, "Invalid Content-Length")
+            return
+
+        if content_length <= 0 or content_length > 4096:
+            self.send_error(413, "Invalid request size")
+            return
         if self.path != "/login":
             self.send_error(404, "Not Found")
             return
