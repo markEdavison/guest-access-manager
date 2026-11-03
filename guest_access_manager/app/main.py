@@ -91,6 +91,20 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
             self.send_error(400, "Invalid login fields")
             return
 
+        from auth import login_is_rate_limited, ip_is_rate_limited
+
+        # Use the direct connection address for now.
+        # Proxy-aware client identification must be
+        # configured before LAN deployment.
+        source_ip = self.client_address[0]
+
+        if (
+            login_is_rate_limited(username, source_ip)
+            or ip_is_rate_limited(source_ip)
+        ):
+            self.send_error(429, "Too many login attempts")
+            return
+
         # Login remains disabled until CSRF validation,
         # authentication, and rate limiting are connected.
         self.send_error(403, "Login not enabled yet")
