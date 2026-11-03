@@ -39,7 +39,7 @@ def verify_password(password, stored_hash):
     except (ValueError, TypeError):
         return False
 
-def create_staff_user(username, password):
+def create_staff_user(username, password, role="frontdesk"):
     """Create a staff user with a securely hashed password."""
     from database import get_connection
 
@@ -56,7 +56,7 @@ def create_staff_user(username, password):
             """
             INSERT INTO staff_users
                 (username, password_hash, role)
-            VALUES (?, ?, 'frontdesk')
+            VALUES (?, ?, ?)
             """,
             (username, password_hash)
         )
