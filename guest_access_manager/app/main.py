@@ -44,6 +44,21 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
 
             # Keep logout disabled until CSRF and
             # request-origin checks are implemented.
+
+            from auth import verify_csrf_token
+
+            csrf_cookie = cookies.get("gam_csrf")
+            expected_token = (
+                csrf_cookie.value if csrf_cookie else None
+            )
+
+            if not token or not expected_token:
+                self.send_error(403, "Invalid logout request")
+                return
+
+            # Logout is still disabled until the
+            # submitted CSRF token is checked.
+
             self.send_error(403, "Logout not enabled yet")
             return
 
