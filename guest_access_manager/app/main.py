@@ -107,6 +107,26 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
 
         # Login remains disabled until CSRF validation,
         # authentication, and rate limiting are connected.
+        
+        from auth import authenticate_staff_user
+
+        # Verify credentials without enabling login yet.
+        staff_user = authenticate_staff_user(
+            username,
+            password
+        )
+
+        if staff_user is None:
+            from auth import record_login_attempt
+
+            record_login_attempt(
+                username,
+                source_ip,
+                False
+            )
+            self.send_error(401, "Invalid username or password")
+            return
+
         self.send_error(403, "Login not enabled yet")
 
     def do_GET(self):
