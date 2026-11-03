@@ -137,6 +137,12 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
             True
         )
 
+        from sessions import save_session
+
+        # Create a session token after successful
+        # credential verification.
+        session_token = save_session(staff_user["id"])
+
         self.send_error(403, "Login not enabled yet")
 
     def do_GET(self):
