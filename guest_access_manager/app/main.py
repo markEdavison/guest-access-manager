@@ -331,6 +331,35 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
             self.wfile.write(data)
             return
 
+        if self.path == "/api-test":
+            from urllib.request import Request, urlopen
+
+            token = os.environ.get("SUPERVISOR_TOKEN", "")
+            if not token:
+                self.send_error(503, "API token unavailable")
+                return
+
+            request = Request(
+                "http://supervisor/core/api/",
+                headers={"Authorization": f"Bearer {token}"}
+            )
+
+            try:
+                with urlopen(request, timeout=10) as response:
+                    result = response.read()
+                    status = response.status
+            except Exception:
+                self.send_error(502, "Home Assistant API unavailable")
+                return
+
+            self.send_response(status)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("Content-Length", str(len(result)))
+            self.end_headers()
+            self.wfile.write(result)
+            return
+
         if self.path == "/health":
             try:
                 with get_connection() as connection:
