@@ -16,5 +16,9 @@ panel_icon: mdi:door-closed-lock
 map:
   - type: data
     read_only: false
-options: {}
-schema: {}
+options:
+  admin_username: "houseadmin"
+  admin_password: ""
+schema:
+  admin_username: str
+  admin_password: password
