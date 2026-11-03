@@ -1,5 +1,5 @@
 name: "Guest Access Manager"
-version: "0.1.16"
+version: "0.1.17"
 slug: "guest_access_manager"
 description: "Local guest reservation and Schlage lock access management"
 url: "https://github.com/markEdavison/guest-access-manager"
@@ -10,6 +10,7 @@ boot: auto
 init: false
 homeassistant_api: true
 hassio_api: true
+hassio_role: default
 ingress: true
 ingress_port: 8099
 panel_icon: mdi:door-closed-lock
