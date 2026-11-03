@@ -143,6 +143,17 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
         # credential verification.
         session_token = save_session(staff_user["id"])
 
+        # Prepare the authenticated session cookie.
+        session_cookie = SimpleCookie()
+        session_cookie["gam_session"] = session_token
+        session_cookie["gam_session"]["path"] = "/"
+        session_cookie["gam_session"]["httponly"] = True
+        session_cookie["gam_session"]["samesite"] = "Strict"
+        session_cookie["gam_session"]["max-age"] = 28800
+
+        # The cookie is not sent until login is enabled.
+        # HTTPS deployment will require the Secure flag.
+
         self.send_error(403, "Login not enabled yet")
 
     def do_GET(self):
