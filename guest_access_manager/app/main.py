@@ -340,6 +340,14 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
     bool(token),
     flush=True
 )
+        print(
+                "Supervisor-related environment variables:",
+                [
+                    name for name in os.environ
+                    if "SUPERVISOR" in name or "HASSIO" in name
+                ],
+                flush=True
+            )
             if not token:
                 self.send_error(503, "API token unavailable")
                 return
