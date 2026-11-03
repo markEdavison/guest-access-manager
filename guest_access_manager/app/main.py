@@ -154,7 +154,18 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
         # The cookie is not sent until login is enabled.
         # HTTPS deployment will require the Secure flag.
 
-        self.send_error(403, "Login not enabled yet")
+    
+        # Send the authenticated session cookie.
+        self.send_response(303)
+        self.send_header(
+            "Set-Cookie",
+            session_cookie["gam_session"].OutputString()
+        )
+        self.send_header("Location", "./")
+        self.send_header("Cache-Control", "no-store")
+        self.send_header("Content-Length", "0")
+        self.end_headers()
+        return
 
     def do_GET(self):
 
