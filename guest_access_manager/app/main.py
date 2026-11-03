@@ -386,6 +386,16 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
         </head>
         <body>
             <h1>Guest Access Manager</h1>
+            
+<form method="POST" action="logout">
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="{{CSRF_TOKEN}}"
+    >
+    <button type="submit">Log Out</button>
+</form>
+
             <h2>System Setup Successful</h2>
             
 <h2>New Guest Reservation</h2>
