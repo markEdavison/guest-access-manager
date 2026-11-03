@@ -492,16 +492,17 @@ checkout.value = `${checkoutYear}-${checkoutMonth}-${checkoutDay}T11:30`;
         self.end_headers()
         self.wfile.write(data)
 
+
 if __name__ == "__main__":
     initialize_database()
-    
+
     from auth import create_staff_user
 
-try:
-    admin_username, admin_password = get_admin_settings()
-except (OSError, ValueError):
-    admin_username, admin_password = "", ""
-    
+    try:
+        admin_username, admin_password = get_admin_settings()
+    except (OSError, ValueError):
+        admin_username, admin_password = "", ""
+
     if admin_username and admin_password:
         with get_connection() as connection:
             existing = connection.execute(
