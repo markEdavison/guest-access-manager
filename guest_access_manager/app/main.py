@@ -1,6 +1,15 @@
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import os
+def get_admin_settings():
+    """Read initial administrator settings from Home Assistant."""
+    with open("/data/options.json", "r", encoding="utf-8") as file:
+        options = json.load(file)
+
+    return (
+        options.get("admin_username", ""),
+        options.get("admin_password", "")
+    )
 from database import initialize_database
 from database import get_connection
 import json
