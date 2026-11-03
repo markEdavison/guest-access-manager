@@ -462,6 +462,12 @@ checkout.value = `${checkoutYear}-${checkoutMonth}-${checkoutDay}T11:30`;
             logout_csrf_token
         )
 
+        logout_cookie = SimpleCookie()
+        logout_cookie["gam_csrf"] = logout_csrf_token
+        logout_cookie["gam_csrf"]["path"] = "/"
+        logout_cookie["gam_csrf"]["httponly"] = True
+        logout_cookie["gam_csrf"]["samesite"] = "Strict"
+
         data = html.encode("utf-8")
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
