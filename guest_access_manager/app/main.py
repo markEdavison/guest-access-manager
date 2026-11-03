@@ -170,6 +170,12 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
     def do_GET(self):
 
 
+        if self.path == "/logout":
+            # Logout will be implemented as a protected
+            # POST request to prevent unwanted logouts.
+            self.send_error(405, "Use POST to log out")
+            return
+
         if self.path == "/login":
             from auth import create_csrf_token
             from http.cookies import SimpleCookie
