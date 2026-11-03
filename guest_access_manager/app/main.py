@@ -28,9 +28,22 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
             self.send_error(413, "Invalid request size")
             return
 
+
         if self.path == "/logout":
-            # Logout remains disabled until session
-            # validation and CSRF protection are added.
+            from http.cookies import SimpleCookie
+            from sessions import delete_session
+
+            cookies = SimpleCookie()
+
+            try:
+                cookies.load(self.headers.get("Cookie", ""))
+                session = cookies.get("gam_session")
+                token = session.value if session else None
+            except Exception:
+                token = None
+
+            # Keep logout disabled until CSRF and
+            # request-origin checks are implemented.
             self.send_error(403, "Logout not enabled yet")
             return
 
