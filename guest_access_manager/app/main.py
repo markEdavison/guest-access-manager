@@ -345,7 +345,8 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
                     if "SUPERVISOR" in name or "HASSIO" in name
                 ],
                 flush=True
-            )            if not token:
+            )            
+            if not token:
                 self.send_error(503, "API token unavailable")
                 return
 
