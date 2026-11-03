@@ -497,8 +497,11 @@ if __name__ == "__main__":
     
     from auth import create_staff_user
 
+try:
     admin_username, admin_password = get_admin_settings()
-
+except (OSError, ValueError):
+    admin_username, admin_password = "", ""
+    
     if admin_username and admin_password:
         with get_connection() as connection:
             existing = connection.execute(
