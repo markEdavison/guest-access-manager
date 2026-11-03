@@ -79,7 +79,27 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
                 self.send_error(403, "Invalid security token")
                 return
 
-            self.send_error(403, "Logout not enabled yet")
+
+            # Invalidate the session in SQLite.
+            delete_session(token)
+
+            # Clear the browser's session cookie.
+            expired_cookie = SimpleCookie()
+            expired_cookie["gam_session"] = ""
+            expired_cookie["gam_session"]["path"] = "/"
+            expired_cookie["gam_session"]["httponly"] = True
+            expired_cookie["gam_session"]["samesite"] = "Strict"
+            expired_cookie["gam_session"]["max-age"] = 0
+
+            self.send_response(303)
+            self.send_header(
+                "Set-Cookie",
+                expired_cookie["gam_session"].OutputString()
+            )
+            self.send_header("Location", "login")
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("Content-Length", "0")
+            self.end_headers()
             return
 
         if self.path != "/login":
