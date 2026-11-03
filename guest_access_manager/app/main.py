@@ -27,6 +27,13 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
         if content_length <= 0 or content_length > 4096:
             self.send_error(413, "Invalid request size")
             return
+
+        if self.path == "/logout":
+            # Logout remains disabled until session
+            # validation and CSRF protection are added.
+            self.send_error(403, "Logout not enabled yet")
+            return
+
         if self.path != "/login":
             self.send_error(404, "Not Found")
             return
