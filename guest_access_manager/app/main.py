@@ -470,6 +470,13 @@ checkout.value = `${checkoutYear}-${checkoutMonth}-${checkoutDay}T11:30`;
 
         data = html.encode("utf-8")
         self.send_response(200)
+        
+        self.send_header(
+            "Set-Cookie",
+            logout_cookie["gam_csrf"].OutputString()
+        )
+        self.send_header("Cache-Control", "no-store")
+
         self.send_header("Content-Type", "text/html; charset=utf-8")
         self.send_header("Content-Length", str(len(data)))
         self.end_headers()
