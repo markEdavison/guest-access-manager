@@ -58,7 +58,7 @@ def create_staff_user(username, password, role="frontdesk"):
                 (username, password_hash, role)
             VALUES (?, ?, ?)
             """,
-            (username, password_hash)
+            (username, password_hash, role)
         )
         return cursor.lastrowid
 
