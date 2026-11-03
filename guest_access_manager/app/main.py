@@ -335,6 +335,11 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
             from urllib.request import Request, urlopen
 
             token = os.environ.get("SUPERVISOR_TOKEN", "")
+            print(
+    "SUPERVISOR_TOKEN present:",
+    bool(token),
+    flush=True
+)
             if not token:
                 self.send_error(503, "API token unavailable")
                 return
