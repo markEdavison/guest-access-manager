@@ -72,6 +72,25 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
             self.send_error(403, "Invalid security token")
             return
 
+        usernames = form.get("username", [])
+        passwords = form.get("password", [])
+
+        if len(usernames) != 1 or len(passwords) != 1:
+            self.send_error(400, "Invalid login fields")
+            return
+
+        username = usernames[0].strip()
+        password = passwords[0]
+
+        if (
+            not username
+            or not password
+            or len(username) > 100
+            or len(password) > 1024
+        ):
+            self.send_error(400, "Invalid login fields")
+            return
+
         # Login remains disabled until CSRF validation,
         # authentication, and rate limiting are connected.
         self.send_error(403, "Login not enabled yet")
