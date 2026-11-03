@@ -48,7 +48,10 @@ def create_staff_user(username, password, role="frontdesk"):
 
     if len(password) < 12:
         raise ValueError("Password must be at least 12 characters.")
-
+        
+    if role not in ("admin", "frontdesk"):
+        raise ValueError("Invalid staff role.")
+        
     password_hash = hash_password(password)
 
     with get_connection() as connection:
