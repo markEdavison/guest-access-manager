@@ -244,7 +244,6 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
 
-
         if self.path == "/logout":
             # Logout will be implemented as a protected
             # POST request to prevent unwanted logouts.
@@ -452,6 +451,17 @@ checkout.value = `${checkoutYear}-${checkoutMonth}-${checkoutDay}T11:30`;
         </body>
         </html>
         """
+        
+        from auth import create_csrf_token
+        from http.cookies import SimpleCookie
+
+        logout_csrf_token = create_csrf_token()
+
+        html = html.replace(
+            "{{CSRF_TOKEN}}",
+            logout_csrf_token
+        )
+
         data = html.encode("utf-8")
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
