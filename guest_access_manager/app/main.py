@@ -56,8 +56,28 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
                 self.send_error(403, "Invalid logout request")
                 return
 
-            # Logout is still disabled until the
-            # submitted CSRF token is checked.
+
+            # Verify the submitted logout security token.
+            try:
+                body = self.rfile.read(content_length)
+                form = parse_qs(
+                    body.decode("utf-8"),
+                    keep_blank_values=True,
+                    max_num_fields=10
+                )
+                submitted_tokens = form.get("csrf_token", [])
+            except (UnicodeDecodeError, ValueError):
+                self.send_error(400, "Invalid logout form")
+                return
+
+            if (
+                len(submitted_tokens) != 1
+                or not verify_csrf_token(
+                    submitted_tokens[0], expected_token
+                )
+            ):
+                self.send_error(403, "Invalid security token")
+                return
 
             self.send_error(403, "Logout not enabled yet")
             return
