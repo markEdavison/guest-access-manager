@@ -50,6 +50,28 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
             self.send_error(400, "Invalid login form")
             return
 
+        from http.cookies import SimpleCookie
+        from auth import verify_csrf_token
+
+        cookies = SimpleCookie()
+
+        try:
+            cookies.load(self.headers.get("Cookie", ""))
+            csrf_cookie = cookies.get("gam_csrf")
+            expected_token = (
+                csrf_cookie.value if csrf_cookie else None
+            )
+        except Exception:
+            expected_token = None
+
+        submitted_tokens = form.get("csrf_token", [])
+
+        if len(submitted_tokens) != 1 or not verify_csrf_token(
+            submitted_tokens[0], expected_token
+        ):
+            self.send_error(403, "Invalid security token")
+            return
+
         # Login remains disabled until CSRF validation,
         # authentication, and rate limiting are connected.
         self.send_error(403, "Login not enabled yet")
