@@ -127,6 +127,16 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
             self.send_error(401, "Invalid username or password")
             return
 
+        # Record successful credential verification.
+        # A login session is not created yet.
+        from auth import record_login_attempt
+
+        record_login_attempt(
+            username,
+            source_ip,
+            True
+        )
+
         self.send_error(403, "Login not enabled yet")
 
     def do_GET(self):
