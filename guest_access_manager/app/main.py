@@ -493,6 +493,26 @@ checkout.value = `${checkoutYear}-${checkoutMonth}-${checkoutDay}T11:30`;
 
 if __name__ == "__main__":
     initialize_database()
+    
+    from auth import create_staff_user
+
+    admin_username, admin_password = get_admin_settings()
+
+    if admin_username and admin_password:
+        with get_connection() as connection:
+            existing = connection.execute(
+                "SELECT id FROM staff_users WHERE username = ?",
+                (admin_username,)
+            ).fetchone()
+
+        if existing is None:
+            create_staff_user(
+                admin_username,
+                admin_password,
+                role="admin"
+            )
+            print("Initial administrator account created.", flush=True)
+
     server = HTTPServer((HOST, PORT), GuestAccessHandler)
     print(f"Guest Access Manager listening on port {PORT}", flush=True)
     server.serve_forever()
