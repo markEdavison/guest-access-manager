@@ -581,6 +581,39 @@ checkout.value = `${checkoutYear}-${checkoutMonth}-${checkoutDay}T11:30`;
             <p>Reservation database: Not configured</p>
 <p>Schlage lock connection: Connected to Home Assistant</p>
 <p>A101 lock status: <span id="a101-state">Checking...</span></p>
+<h3>A101 Programmed Codes</h3>
+<ul id="a101-codes-list">
+  <li>Loading...</li>
+</ul>
+
+<script>
+fetch("a101-codes")
+  .then(response => {
+    if (!response.ok) throw new Error("Request failed");
+    return response.json();
+  })
+  .then(data => {
+    const list = document.getElementById("a101-codes-list");
+    list.replaceChildren();
+
+    if (!data.codes || data.codes.length === 0) {
+      const item = document.createElement("li");
+      item.textContent = "No codes found";
+      list.appendChild(item);
+      return;
+    }
+
+    data.codes.forEach(code => {
+      const item = document.createElement("li");
+      item.textContent = `${code.name || "Unnamed"} (${code.id})`;
+      list.appendChild(item);
+    });
+  })
+  .catch(() => {
+    const list = document.getElementById("a101-codes-list");
+    list.textContent = "Unable to load codes";
+  });
+</script>
 <script>
 fetch("a101-status")
   .then(response => response.json())
