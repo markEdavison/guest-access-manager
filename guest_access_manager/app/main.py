@@ -112,6 +112,22 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
             if reservation["checkout"] <= reservation["checkin"]:
                 self.send_error(400, "Checkout must be after check-in")
                 return
+            from datetime import datetime
+
+            try:
+                checkin_dt = datetime.fromisoformat(
+                    reservation["checkin"]
+                )
+                checkout_dt = datetime.fromisoformat(
+                    reservation["checkout"]
+                )
+            except ValueError:
+                self.send_error(400, "Invalid reservation dates")
+                return
+
+            if checkout_dt <= checkin_dt:
+                self.send_error(400, "Checkout must be after check-in")
+                return
             self.send_error(501, "Reservation saving not enabled yet")
             return
             
