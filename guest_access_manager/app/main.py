@@ -794,7 +794,7 @@ fetch("a101-status")
 
 
 if __name__ == "__main__":
-    initialize_()
+    initialize_database()
 
     from auth import create_staff_user
 
