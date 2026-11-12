@@ -542,7 +542,8 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
                 print("A101 status check failed:", type(error).__name__, flush=True)
                 self.send_error(502, "Unable to read A101 status")
             return
-            if self.path == "/check-test-reservation":
+
+        if self.path == "/check-test-reservation":
             from http.cookies import SimpleCookie
             from sessions import get_session_user
 
