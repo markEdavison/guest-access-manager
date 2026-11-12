@@ -542,6 +542,39 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
                 print("A101 status check failed:", type(error).__name__, flush=True)
                 self.send_error(502, "Unable to read A101 status")
             return
+            if self.path == "/check-test-reservation":
+            from http.cookies import SimpleCookie
+            from sessions import get_session_user
+
+            cookies = SimpleCookie()
+            try:
+                cookies.load(self.headers.get("Cookie", ""))
+                session = cookies.get("gam_session")
+                token = session.value if session else None
+            except Exception:
+                token = None
+
+            if get_session_user(token) is None:
+                self.send_error(403, "Staff login required")
+                return
+
+            with get_connection() as connection:
+                row = connection.execute(
+                    "SELECT id FROM reservations WHERE reservation_number = ?",
+                    ("TEST001",)
+                ).fetchone()
+
+            data = json.dumps({
+                "reservation_found": row is not None
+            }).encode("utf-8")
+
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("Content-Length", str(len(data)))
+            self.end_headers()
+            self.wfile.write(data)
+            return
         if self.path == "/api-test":
             from urllib.request import Request, urlopen
 
