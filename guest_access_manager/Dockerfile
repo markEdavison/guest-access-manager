@@ -7,4 +7,4 @@ WORKDIR /app
 
 COPY app/ /app/
 
-CMD ["python3", "/app/main.py"]
+CMD ["/command/with-contenv", "python3", "/app/main.py"]
