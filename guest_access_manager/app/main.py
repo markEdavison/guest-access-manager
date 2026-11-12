@@ -40,7 +40,10 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
             self.send_error(413, "Invalid request size")
             return
 
-
+        if self.path == "/save-reservation":
+            self.send_error(501, "Reservation saving not enabled yet")
+            return
+            
         if self.path == "/logout":
             from http.cookies import SimpleCookie
             from sessions import delete_session
