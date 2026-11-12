@@ -535,6 +535,11 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
 <h2>New Guest Reservation</h2>
 
 <form method="POST" action="save-reservation">
+    <input
+    type="hidden"
+    name="csrf_token"
+    value="{{CSRF_TOKEN}}"
+    >
     <label>Guest Name</label>
     <input type="text" name="guest_name" required>
 
