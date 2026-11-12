@@ -56,7 +56,37 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
             if user is None:
                 self.send_error(403, "Staff login required")
                 return
+            from auth import verify_csrf_token
 
+            csrf_cookie = cookies.get("gam_csrf")
+            expected_token = (
+                csrf_cookie.value if csrf_cookie else None
+            )
+
+            if not expected_token:
+                self.send_error(403, "Missing security token")
+                return
+
+            try:
+                body = self.rfile.read(content_length)
+                form = parse_qs(
+                    body.decode("utf-8"),
+                    keep_blank_values=True,
+                    max_num_fields=10
+                )
+                submitted_tokens = form.get("csrf_token", [])
+            except (UnicodeDecodeError, ValueError):
+                self.send_error(400, "Invalid reservation form")
+                return
+
+            if (
+                len(submitted_tokens) != 1
+                or not verify_csrf_token(
+                    submitted_tokens[0], expected_token
+                )
+            ):
+                self.send_error(403, "Invalid security token")
+                return
             self.send_error(501, "Reservation saving not enabled yet")
             return
             
