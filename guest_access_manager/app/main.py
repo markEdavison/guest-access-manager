@@ -87,6 +87,31 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
             ):
                 self.send_error(403, "Invalid security token")
                 return
+            fields = (
+                "reservation_number",
+                "guest_name",
+                "guest_email",
+                "checkin",
+                "checkout",
+                "room"
+            )
+
+            if any(
+                len(form.get(field, [])) != 1
+                or not form[field][0].strip()
+                for field in fields
+            ):
+                self.send_error(400, "Missing or invalid reservation fields")
+                return
+
+            reservation = {
+                field: form[field][0].strip()
+                for field in fields
+            }
+
+            if reservation["checkout"] <= reservation["checkin"]:
+                self.send_error(400, "Checkout must be after check-in")
+                return
             self.send_error(501, "Reservation saving not enabled yet")
             return
             
