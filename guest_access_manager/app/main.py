@@ -41,6 +41,22 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
             return
 
         if self.path == "/save-reservation":
+            from http.cookies import SimpleCookie
+
+            cookies = SimpleCookie()
+            try:
+                cookies.load(self.headers.get("Cookie", ""))
+                session = cookies.get("gam_session")
+                token = session.value if session else None
+            except Exception:
+                token = None
+
+            user = get_session_user(token)
+
+            if user is None:
+                self.send_error(403, "Staff login required")
+                return
+
             self.send_error(501, "Reservation saving not enabled yet")
             return
             
