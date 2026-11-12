@@ -687,7 +687,7 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
     </select>
 
     <button type="submit">Save Reservation</button>
-    <p id="reservation-message">Reservation saving is not enabled yet.</p>
+    <p id="reservation-message">Enter reservation details and click Save Reservation.</p>
 </form>
 
 <script>
