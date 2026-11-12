@@ -330,7 +330,34 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(data)
             return
+        if self.path == "/a101-status":
+            from urllib.request import Request, urlopen
 
+            token = os.environ.get("SUPERVISOR_TOKEN", "")
+            request = Request(
+                "http://supervisor/core/api/states/lock.a101_main",
+                headers={"Authorization": f"Bearer {token}"}
+            )
+
+            try:
+                with urlopen(request, timeout=10) as response:
+                    result = json.load(response)
+
+                data = json.dumps({
+                    "entity_id": result.get("entity_id"),
+                    "state": result.get("state")
+                }).encode("utf-8")
+
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Cache-Control", "no-store")
+                self.send_header("Content-Length", str(len(data)))
+                self.end_headers()
+                self.wfile.write(data)
+            except Exception as error:
+                print("A101 status check failed:", type(error).__name__, flush=True)
+                self.send_error(502, "Unable to read A101 status")
+            return
         if self.path == "/api-test":
             from urllib.request import Request, urlopen
 
