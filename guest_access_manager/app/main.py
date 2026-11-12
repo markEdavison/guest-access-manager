@@ -534,7 +534,7 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
             
 <h2>New Guest Reservation</h2>
 
-<form>
+<form method="POST" action="save-reservation">
     <label>Guest Name</label>
     <input type="text" name="guest_name" required>
 
