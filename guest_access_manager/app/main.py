@@ -26,6 +26,7 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
     
 
     def do_POST(self):
+        from sessions import get_session_user
         # Reject oversized or invalid login requests.
         try:
             content_length = int(
