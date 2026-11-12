@@ -32,17 +32,21 @@ def initialize_database():
             )
         """)
 
-        connection.execute("""
-        # Add room column to existing reservation databases.
+        # Add room column to existing databases.
         columns = [
             row[1]
-            for row in connection.execute("PRAGMA table_info(reservations)")
+            for row in connection.execute(
+                "PRAGMA table_info(reservations)"
+            )
         ]
 
         if "room" not in columns:
             connection.execute(
                 "ALTER TABLE reservations ADD COLUMN room TEXT"
-            )            CREATE TABLE IF NOT EXISTS reservation_doors (
+            )
+
+        connection.execute("""
+            CREATE TABLE IF NOT EXISTS reservation_doors (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 reservation_id INTEGER NOT NULL,
                 door_id TEXT NOT NULL,
@@ -53,7 +57,7 @@ def initialize_database():
                     ON DELETE CASCADE
             )
         """)
-
+        
         connection.execute("""
             CREATE TABLE IF NOT EXISTS access_events (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
