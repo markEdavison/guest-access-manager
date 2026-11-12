@@ -129,7 +129,29 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
                 self.send_error(400, "Checkout must be after check-in")
                 return
 
-            self.send_error(501, "Reservation saving not enabled yet")
+            import sqlite3
+
+            try:
+                reservation_id = save_reservation(
+                    reservation["reservation_number"],
+                    reservation["guest_name"],
+                    reservation["guest_email"],
+                    reservation["checkin"],
+                    reservation["checkout"],
+                    reservation["room"]
+                )
+            except sqlite3.IntegrityError:
+                self.send_error(409, "Reservation number already exists")
+                return
+            except sqlite3.Error:
+                self.send_error(500, "Unable to save reservation")
+                return
+
+            self.send_response(303)
+            self.send_header("Location", "./")
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("Content-Length", "0")
+            self.end_headers()
             return
             from email.utils import parseaddr
 
