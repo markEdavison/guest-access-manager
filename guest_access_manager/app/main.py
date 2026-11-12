@@ -13,6 +13,7 @@ def get_admin_settings():
     )
 from database import initialize_database
 from database import get_connection
+from database import save_reservation
 
 from urllib.parse import parse_qs
 
@@ -471,13 +472,13 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
                 }
 
                 result = {
-                    "database": "OK" if required.issubset(tables) else "INCOMPLETE",
+                    "": "OK" if required.issubset(tables) else "INCOMPLETE",
                     "tables": tables
                 }
                 status = 200 if required.issubset(tables) else 503
 
             except Exception:
-                result = {"database": "ERROR"}
+                result = {"": "ERROR"}
                 status = 503
 
             data = json.dumps(result).encode("utf-8")
@@ -579,7 +580,7 @@ checkout.value = `${checkoutYear}-${checkoutMonth}-${checkoutDay}T11:30`;
 
 </script>
 
-            <p>Reservation database: Not configured</p>
+            <p>Reservation : Not configured</p>
 <p>Schlage lock connection: Connected to Home Assistant</p>
 <p>A101 lock status: <span id="a101-state">Checking...</span></p>
 <h3>A101 Programmed Codes</h3>
@@ -662,7 +663,7 @@ fetch("a101-status")
 
 
 if __name__ == "__main__":
-    initialize_database()
+    initialize_()
 
     from auth import create_staff_user
 
