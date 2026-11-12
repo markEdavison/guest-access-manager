@@ -355,14 +355,18 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
                 service_data = result.get("service_response", {})
 
                 codes = []
-                if isinstance(service_data, dict):
-                    for code_id, details in service_data.items():
-                        if isinstance(details, dict):
-                            codes.append({
-                                "id": str(code_id),
-                                "name": details.get("name", "")
-                            })
 
+                if isinstance(service_data, dict):
+                    lock_data = service_data.get("lock.a101_main", {})
+
+                    if isinstance(lock_data, dict):
+                        for code_id, details in lock_data.items():
+                            if isinstance(details, dict):
+                                codes.append({
+                                    "id": str(code_id),
+                                    "name": details.get("name", "")
+                                })
+                                
                 output = json.dumps({
                     "success": True,
                     "response_received": bool(service_data),
