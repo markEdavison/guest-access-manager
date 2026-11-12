@@ -128,9 +128,22 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
             if checkout_dt <= checkin_dt:
                 self.send_error(400, "Checkout must be after check-in")
                 return
+
             self.send_error(501, "Reservation saving not enabled yet")
             return
-            
+            from email.utils import parseaddr
+
+            email = reservation["guest_email"]
+
+            if (
+                len(email) > 254
+                or any(char.isspace() for char in email)
+                or parseaddr(email)[1] != email
+                or email.count("@") != 1
+                or "." not in email.split("@")[1]
+            ):
+                self.send_error(400, "Invalid guest email")
+                return            
         if self.path == "/logout":
             from http.cookies import SimpleCookie
             from sessions import delete_session
