@@ -554,7 +554,8 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
         <option value="A101">A101</option>
     </select>
 
-    <p>Reservation saving is not enabled yet.</p>
+<button type="submit">Save Reservation</button>
+<p id="reservation-message">Reservation saving is not enabled yet.</p>
 </form>
 
 <script>
