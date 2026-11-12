@@ -565,8 +565,18 @@ checkout.value = `${checkoutYear}-${checkoutMonth}-${checkoutDay}T11:30`;
 </script>
 
             <p>Reservation database: Not configured</p>
-            <p>Schlage lock connection: Not configured</p>
-            <p>Guest PIN automation: Not configured</p>
+<p>Schlage lock connection: Connected to Home Assistant</p>
+<p>A101 lock status: <span id="a101-state">Checking...</span></p>
+<script>
+fetch("a101-status")
+  .then(response => response.json())
+  .then(data => {
+    document.getElementById("a101-state").textContent = data.state || "Unknown";
+  })
+  .catch(() => {
+    document.getElementById("a101-state").textContent = "Unavailable";
+  });
+</script>            <p>Guest PIN automation: Not configured</p>
             <p>A101 pilot: Existing Home Assistant scripts unchanged</p>
         </body>
         </html>
