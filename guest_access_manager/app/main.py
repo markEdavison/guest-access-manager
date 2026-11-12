@@ -351,13 +351,23 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
                 with urlopen(request, timeout=15) as response:
                     result = json.load(response)
 
-                # Do not expose PINs or other code details.
+                # Return code names and IDs only. Never expose PINs.
                 service_data = result.get("service_response", {})
+
+                codes = []
+                if isinstance(service_data, dict):
+                    for code_id, details in service_data.items():
+                        if isinstance(details, dict):
+                            codes.append({
+                                "id": str(code_id),
+                                "name": details.get("name", "")
+                            })
+
                 output = json.dumps({
                     "success": True,
-                    "response_received": bool(service_data)
+                    "response_received": bool(service_data),
+                    "codes": codes
                 }).encode("utf-8")
-
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
                 self.send_header("Cache-Control", "no-store")
