@@ -330,6 +330,49 @@ class GuestAccessHandler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(data)
             return
+        if self.path == "/a101-codes":
+            from urllib.request import Request, urlopen
+
+            token = os.environ.get("SUPERVISOR_TOKEN", "")
+
+            request = Request(
+                "http://supervisor/core/api/services/schlage/get_codes?return_response",
+                data=json.dumps({
+                    "entity_id": "lock.a101_main"
+                }).encode("utf-8"),
+                headers={
+                    "Authorization": f"Bearer {token}",
+                    "Content-Type": "application/json"
+                },
+                method="POST"
+            )
+
+            try:
+                with urlopen(request, timeout=15) as response:
+                    result = json.load(response)
+
+                # Do not expose PINs or other code details.
+                service_data = result.get("service_response", {})
+                output = json.dumps({
+                    "success": True,
+                    "response_received": bool(service_data)
+                }).encode("utf-8")
+
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Cache-Control", "no-store")
+                self.send_header("Content-Length", str(len(output)))
+                self.end_headers()
+                self.wfile.write(output)
+
+            except Exception as error:
+                print(
+                    "A101 code retrieval failed:",
+                    type(error).__name__,
+                    flush=True
+                )
+                self.send_error(502, "Unable to retrieve A101 codes")
+            return
         if self.path == "/a101-status":
             from urllib.request import Request, urlopen
 
