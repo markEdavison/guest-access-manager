@@ -25,6 +25,7 @@ def initialize_database():
                 guest_email TEXT NOT NULL,
                 checkin TEXT NOT NULL,
                 checkout TEXT NOT NULL,
+                room TEXT,
                 pin TEXT,
                 status TEXT NOT NULL DEFAULT 'Pending',
                 created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
