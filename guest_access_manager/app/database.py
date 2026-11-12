@@ -190,3 +190,18 @@ def save_reservation(
             )
 
     return reservation_id
+
+def save_reservation(reservation_number, guest_name, guest_email,
+                     checkin, checkout, room):
+    with get_connection() as connection:
+        cursor = connection.execute(
+            """
+            INSERT INTO reservations
+            (reservation_number, guest_name, guest_email,
+             checkin, checkout, room)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (reservation_number, guest_name, guest_email,
+             checkin, checkout, room)
+        )
+        return cursor.lastrowid
